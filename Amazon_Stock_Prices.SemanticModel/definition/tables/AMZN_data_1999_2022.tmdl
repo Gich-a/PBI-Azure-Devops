@@ -1,0 +1,130 @@
+table AMZN_data_1999_2022
+	lineageTag: 13f8473d-2a4a-44e7-828b-c8d6417ff1a5
+
+	measure 'High Value' = SUM(AMZN_data_1999_2022[High])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: a0264b73-7a6e-491e-b706-1ad0b793b330
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9c816045-b2a6-43d0-aff3-fad4333e73b3
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Open
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 6e5fab36-d893-4cc6-8282-c27b7514988d
+		summarizeBy: none
+		sourceColumn: Open
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column High
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 84acea90-f6dc-450c-9177-70dd5ac8f694
+		summarizeBy: none
+		sourceColumn: High
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Low
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 04733d58-cee3-48ff-abdc-5200d3766af0
+		summarizeBy: none
+		sourceColumn: Low
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Close
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 60168899-5091-42e7-9e0e-63bf3e114de1
+		summarizeBy: none
+		sourceColumn: Close
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column 'Adj Close'
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 378ecb9f-99ed-4739-8589-9fdcbd32ac54
+		summarizeBy: none
+		sourceColumn: Adj Close
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Volume
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b4616df-3933-4285-a200-7bf518ebe6d4
+		summarizeBy: none
+		sourceColumn: Volume
+
+		annotation SummarizationSetBy = User
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: f43356c6-50d0-414e-9766-fa6431677418
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = User
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 95487e78-2485-4aef-a06e-1955cd8f0103
+		summarizeBy: none
+		sourceColumn: Month Name
+		sortByColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 2047fc0d-5ce4-45dd-a968-eff4f5147c79
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AMZN_data_1999_2022 = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Bob\OneDrive\Desktop\Learnings\PBI-Azure-Devops\AMZN_data_1999_2022.csv"),[Delimiter=",", Columns=7, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Date", type date}, {"Open", Currency.Type}, {"High", Currency.Type}, {"Low", Currency.Type}, {"Close", Currency.Type}, {"Adj Close", Currency.Type}, {"Volume", Int64.Type}}),
+				    #"Inserted Year" = Table.AddColumn(#"Changed Type", "Year", each Date.Year([Date]), Int64.Type),
+				    #"Inserted Month Name" = Table.AddColumn(#"Inserted Year", "Month Name", each Date.MonthName([Date]), type text),
+				    #"Inserted Month" = Table.AddColumn(#"Inserted Month Name", "Month", each Date.Month([Date]), Int64.Type)
+				in
+				    #"Inserted Month"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

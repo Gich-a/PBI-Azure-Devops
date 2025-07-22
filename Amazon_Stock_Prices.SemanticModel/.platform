@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Amazon_Stock_Prices"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "6878886d-7daa-49b5-8784-57f81fac0984"
+  }
+}
